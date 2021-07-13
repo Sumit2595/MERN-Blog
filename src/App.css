@@ -1,0 +1,9 @@
+#navbarTogglerDemo01{
+    text-align: center;
+}
+.navbar-nav > .nav-item{
+     margin-right: 6rem; 
+} 
+.navbar{
+   color: white;
+}
