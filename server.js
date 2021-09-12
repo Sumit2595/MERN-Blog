@@ -2,10 +2,11 @@ const express = require('express')
 const cors = require('cors')
 const app = express()
 const mongoose = require('mongoose');
-const PORT = process.env.PORT || 5000;
+const PORT = 4000;
+const CryptoJS = require("crypto-js");
 app.use(cors())
 app.use(express.json());
-mongoose.connect('mongodb+srv://admin-sumit:sc1645@%23@cluster0.cxlc3.mongodb.net/BlogDB', {useNewUrlParser: true, useUnifiedTopology: true});
+mongoose.connect('mongodb://localhost:27017/BlogDB', {useNewUrlParser: true, useUnifiedTopology: true});
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function() {
@@ -36,7 +37,13 @@ const userSchema = new mongoose.Schema({
   const UserAnswer=mongoose.model('UserAnswer',userAnswerSchema);
 app.post("/register",async (req, res)=> {
     console.log(req.body);
-    const {userName,userPass} = req.body;
+    let {userName,userPass} = req.body;
+    //decrypting
+    console.log("Encrypted password",userPass);
+    const bytes  = CryptoJS.AES.decrypt(userPass, 'secret key 123');
+     const originalText = bytes.toString(CryptoJS.enc.Utf8);
+     console.log("Decrypted Password is",originalText);
+     userPass=originalText;
     const checkName=await User.findOne({name:userName}).exec();
     if(checkName){
         res.status(500);
@@ -51,12 +58,18 @@ app.post("/register",async (req, res)=> {
           console.log('Saved Successfully');
       })
   res.json({
-      message:"succes"
+      message:"success"
   });
 });
 app.post("/login",async (req, res)=> {
     console.log(req.body);
-    const {userName,userPass} = req.body;
+    let {userName,userPass} = req.body;
+    console.log("Encrypted password",userPass);
+    //decrypting password
+    const bytes  = CryptoJS.AES.decrypt(userPass, 'secret key 123');
+     const originalText = bytes.toString(CryptoJS.enc.Utf8);
+     console.log("Decrypted Password is",originalText);
+     userPass=originalText;
     const checkName=await User.findOne({name:userName}).exec();
     console.log(checkName);
     if(!checkName || checkName.password!==userPass){

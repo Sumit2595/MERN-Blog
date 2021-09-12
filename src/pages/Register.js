@@ -4,6 +4,7 @@ import { useHistory } from "react-router-dom";
 import Navbar from '../components/Navbar';
 import { CredentialsContext } from '../App';
 import { CheckError } from './Login';
+var CryptoJS = require("crypto-js");
   const Register=()=> {
     const [userName,setName]=useState("");
     const [userPass,setPass]=useState("");
@@ -21,8 +22,11 @@ import { CheckError } from './Login';
         setName(e.target.value);
     }
     const getPass=(e)=>{
-        console.log(e.target.value);
-        setPass(e.target.value);
+      console.log(e.target.value);
+      const password=e.target.value;
+      const ciphertext = CryptoJS.AES.encrypt(password, 'secret key 123').toString();
+       console.log("The encrypted password is",ciphertext); 
+      setPass(ciphertext);
     }
     const register = (e) => {
         e.preventDefault();
